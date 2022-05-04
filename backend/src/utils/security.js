@@ -28,9 +28,14 @@ function getToken(user) {
     return jwt.sign(tokenPayload, process.env.JWT_SECRET)
 }
 
+function generateRandomSixDigitCode() {
+    return Math.random().toString().slice(2, 8)
+}
+
 module.exports = {
-    hash,
     getRandomSalt,
     getHashedPassword,
-    getToken
+    getToken,
+    generateRandomSixDigitCode,
+    hash
 }

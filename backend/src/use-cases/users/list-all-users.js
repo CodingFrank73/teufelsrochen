@@ -1,4 +1,4 @@
-const { find } = require("../db-access/dao-users");
+const { find } = require("../../db-access/dao-users");
 
 async function listAllUsers() {
     const users = await find();

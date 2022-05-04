@@ -1,4 +1,4 @@
-const { find } = require("../db-access/dao-products");
+const { find } = require("../../db-access/dao-products");
 
 async function listAllProducts() {
     const products = await find();

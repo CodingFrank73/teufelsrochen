@@ -6,6 +6,7 @@ import "./list.scss"
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Datatable from "../../components/datatable/Datatable";
+import { Outlet } from "react-router-dom";
 
 
 
@@ -20,6 +21,7 @@ const List = ({ route, columns }) => {
                 <Navbar />
                 <Datatable route={route} columns={columns} />
             </div>
+            {/* <Outlet /> */}
         </div >
     );
 }

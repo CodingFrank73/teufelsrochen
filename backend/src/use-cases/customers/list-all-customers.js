@@ -1,8 +1,9 @@
-const { find } = require("../db-access/dao-customers");
+const { CustomerDAO } = require("../../db-access");
+
 
 async function listAllCustomers() {
 
-    const customers = await find();
+    const customers = await CustomerDAO.find();
     const listOfCustomers = customers.map(c => ({
         _id: c._id,
         gender: c.gender,

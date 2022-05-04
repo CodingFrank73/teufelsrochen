@@ -1,6 +1,6 @@
 const moment = require("moment");
 
-function createCustomerObject(
+function createCustomer(
     { _id,
         gender,
         firstName,
@@ -12,11 +12,17 @@ function createCustomerObject(
         dateOfBirth,
         isActivated,
         loginEmail,
+        emailVerified = false,
         pwHash,
         salt,
+        sixDigitVerificationCode,
         contacts,
         addDate,
         lastChangeAt }) {
+
+    if (!loginEmail) {
+        throw new Error("Email-Adresse muss vorhanden sein.")
+    }
 
     return {
         _id,
@@ -30,7 +36,9 @@ function createCustomerObject(
         dateOfBirth,
         isActivated: isActivated || true,
         loginEmail,
+        emailVerified,
         pwHash,
+        sixDigitVerificationCode,
         salt,
         contacts,
         addDate: addDate || moment().local().format("DD.MM.YYYY, HH:mm"),
@@ -39,5 +47,5 @@ function createCustomerObject(
 }
 
 module.exports = {
-    createCustomerObject
+    createCustomer
 }

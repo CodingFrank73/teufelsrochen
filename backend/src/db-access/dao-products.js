@@ -9,13 +9,13 @@ async function find() {
 
 async function findByID(id) {
     const db = await getDB();
-    const product = await db.collection("product").findOne({ id: ObjectId(id) });
+    const product = await db.collection("products").findOne({ _id: ObjectId(id) });
     return product;
 }
 
 async function insert(product) {
     const db = await getDB();
-    const newProduct = await db.collection("product").insert(product);
+    const newProduct = await db.collection("products").insert(product);
     return newProduct;
 }
 

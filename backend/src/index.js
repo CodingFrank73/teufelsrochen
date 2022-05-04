@@ -6,13 +6,9 @@ const multer = require("multer");
 const PORT = process.env.PORT || 9000;
 const app = express();
 
-const { addProduct } = require("./use-cases/add-product");
-const { listAllCustomers } = require("./use-cases/list-all-customers");
-const { listAllProducts } = require("./use-cases/list-all-products");
-const { listAllUsers } = require("./use-cases/list-all-users");
+const { CustomerService, ProductService, UserService } = require("./use-cases");
+
 const { imageBufferToBase64 } = require("./utils/converter");
-const { loginUser } = require("./use-cases/users/login-user");
-const { registerUser } = require("./use-cases/users/register-user");
 const { count } = require("./db-access/dao-shared");
 
 app.use(cors());
@@ -28,11 +24,23 @@ app.get("/", (req, res) => {
 app.get("/api/customers/all", async (req, res) => {
 
     try {
-        const customers = await listAllCustomers();
-        res.json(customers)
+        const customers = await CustomerService.listAllCustomers();
+        res.status(200).json(customers)
 
     } catch (error) {
         res.status(500).json({ err: error.message || "Unknown error during reading customers" });
+    }
+})
+
+app.get("/api/customers/single/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const customer = await CustomerService.showCustomer({ customerID: id });
+        res.status(200).json(customer)
+
+    } catch (error) {
+        res.status(500).json({ err: error.message || "Unknown error during reading customer." })
     }
 })
 
@@ -47,16 +55,54 @@ app.get("/api/customers/count", async (req, res) => {
     }
 })
 
+app.post("/api/customers/register", async (req, res) => {
+    try {
+        const customerInfo = req.body;
+        console.log(customerInfo);
+
+        const customer = await CustomerService.registerCustomer(customerInfo);
+        res.status(201).json(customer)
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ err: { message: error.message } })
+    }
+})
+
+app.post("/api/customers/verifyEmail", async (req, res) => {
+    try {
+        const loginEmail = req.body.email;
+        const sixDigitCode = req.body.sixDigitCode;
+        const result = await CustomerService.verifyCustomerEmail({ loginEmail, sixDigitCode });
+        res.status(200).json(result);
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ err: { message: error.message } })
+    }
+})
 
 // -------------------- products --------------------
 app.get("/api/products/all", async (req, res) => {
 
     try {
-        const products = await listAllProducts();
-        res.json(products)
+        const products = await ProductService.listAllProducts();
+        res.json(products);
 
     } catch (error) {
         res.status(500).json({ err: error.message || "Unknown error while reading products" });
+    }
+})
+
+app.get("/api/products/single/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const product = await ProductService.showProduct({ productID: id });
+        res.json(product);
+
+    } catch (error) {
+        res.status(500).json({ err: error.message || "Unknown error while reading the selected product" });
     }
 })
 
@@ -70,7 +116,7 @@ app.post("/api/products/add", async (req, res) => {
         // const variations = JSON.parse(newProductInformations.variations)
         // const product = await addProduct({ ...newProductInformations, variations, imageLink })
 
-        const product = await addProduct({ ...newProductInformations, imageLink })
+        const product = await ProductService.addProduct({ ...newProductInformations, imageLink })
         res.json(product)
 
     } catch (error) {
@@ -84,7 +130,7 @@ app.post("/api/products/add", async (req, res) => {
 // ---------------------- users ---------------------
 app.get("/api/users/all", async (req, res) => {
     try {
-        const foundUsers = await listAllUsers();
+        const foundUsers = await UserService.listAllUsers();
         const users = await foundUsers.map(user => ({
             _id: user._id,
             firstName: user.firstName,
@@ -103,12 +149,24 @@ app.get("/api/users/all", async (req, res) => {
     }
 })
 
+app.get("/api/users/single/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        const user = await UserService.showUser({ userID: id })
+        res.json(user)
+
+    } catch (error) {
+        res.status(500).json({ err: error.message || "Unknown error during reading user." })
+    }
+})
+
 app.post("/api/users/login", async (req, res) => {
     try {
         const email = req.body.email;
         const password = req.body.password;
 
-        const token = await loginUser({ email, password });
+        const token = await UserService.loginUser({ email, password });
         res.json(token);
 
     } catch (error) {
@@ -123,7 +181,7 @@ app.post("/api/users/add", async (req, res) => {
 
         console.log(userInfo);
 
-        const user = await registerUser(userInfo);
+        const user = await UserService.registerUser(userInfo);
         res.json(user)
 
     } catch (error) {

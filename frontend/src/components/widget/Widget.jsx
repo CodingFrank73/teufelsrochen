@@ -19,9 +19,9 @@ const Widget = ({ type, amount }) => {
     switch (type) {
         case "customer":
             data = {
-                title: "BENUTZER",
+                title: "KUNDEN",
                 isMoney: false,
-                link: "Alle Benutzer anzeigen",
+                link: "Alle Kunden anzeigen",
                 amount: amount,
                 route: "customers",
                 icon: (
