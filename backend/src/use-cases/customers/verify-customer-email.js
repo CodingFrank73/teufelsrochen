@@ -4,7 +4,7 @@ const { createCustomer } = require("../../domain/Customer");
 async function verifyCustomerEmail({ loginEmail, sixDigitCode }) {
     const foundCustomer = await CustomerDAO.findByLoginEmail(loginEmail)
     if (!foundCustomer) {
-        throw new Error("Beim verifizieren mit dem 6-Stelligen Code gab es ein Problem")
+        throw new Error("Bei der Verifizierung deines Accounts gab es ein Problem")
     }
 
     const customer = createCustomer(foundCustomer);

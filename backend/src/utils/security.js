@@ -5,27 +5,27 @@ function hash(input) {
     return crypto.createHash('sha256').update(input).digest('hex');
 }
 
-function getRandomSalt() {
+function createRandomSalt() {
     return crypto.randomBytes(64).toString('hex');
 }
 
-function getHashedPassword(password, salt) {
+function createHashedPassword(password, salt) {
     return hash(password + salt)
 }
 
-function getToken(user) {
-    const TEN_MINUTES = 60 * 10;
+function createToken(user, type = "access", lifetimeInSeconds = Number(process.env.TEN_MINUTES)) {
     const inititedAt = Math.floor(Date.now() / 1000);
-    const expiresAt = inititedAt + TEN_MINUTES;
+    const expiresAt = inititedAt + lifetimeInSeconds;
 
     const tokenPayload = {
         sub: user._id,
-        tokenTypen: "access",
+        type: type,
         iat: inititedAt,
         exp: expiresAt
     }
 
-    return jwt.sign(tokenPayload, process.env.JWT_SECRET)
+    const token = jwt.sign(tokenPayload, process.env.JWT_SECRET);
+    return token
 }
 
 function generateRandomSixDigitCode() {
@@ -33,9 +33,9 @@ function generateRandomSixDigitCode() {
 }
 
 module.exports = {
-    getRandomSalt,
-    getHashedPassword,
-    getToken,
+    createRandomSalt,
+    createHashedPassword,
+    createToken,
     generateRandomSixDigitCode,
     hash
 }

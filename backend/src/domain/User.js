@@ -1,28 +1,35 @@
 
-const { getRandomSalt, getHashedPassword } = require("../utils/security")
+const moment = require("moment");
 
-function createUserObject(
+function createUser(
     { _id,
         firstName,
         lastName,
         isAdmin,
         loginEmail,
-        password,
-        passwordHash,
-        passwordSalt,
-        status,
+        emailVerified = false,
+        pwHash,
+        salt,
+        sixDigitVerificationCode,
+        isActivated,
         addDate,
-        modifiedDate }) {
+        lastChangeAt }) {
 
     if (typeof firstName !== "string" || firstName.trim().length === 0) {
         throw new Error("Der Vorname ist ein Pflichtfeld")
     }
 
-    if (!passwordHash && !password) {
+    if (typeof lastName !== "string" || lastName.trim().length === 0) {
+        throw new Error("Der Nachname ist ein Pflichtfeld")
+    }
+
+    if (!pwHash) {
         throw new Error("Password oder PasswordHash erforderlich")
     }
 
-    const _pwSalt = passwordSalt || getRandomSalt;
+    if (!loginEmail) {
+        throw new Error("Email-Adresse muss vorhanden sein.")
+    }
 
     return {
         _id,
@@ -30,14 +37,16 @@ function createUserObject(
         lastName,
         isAdmin: isAdmin || false,
         loginEmail,
-        passwordHash: passwordHash || getHashedPassword(password, _pwSalt),
-        passwordSalt: _pwSalt,
-        status: status || "enabled",
-        addDate: addDate || Date.now(),
-        modifiedDate: modifiedDate || Date.now(),
+        emailVerified,
+        pwHash,
+        salt,
+        sixDigitVerificationCode,
+        isActivated: isActivated || "true",
+        addDate: addDate || moment().local().format("DD.MM.YYYY, HH:mm"),
+        lastChangeAt: lastChangeAt
     }
 }
 
 module.exports = {
-    createUserObject
+    createUser
 }

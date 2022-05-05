@@ -18,4 +18,6 @@ async function listAllUsers() {
     return listOfUsers
 }
 
-module.exports = { listAllUsers }
+module.exports = {
+    listAllUsers
+}

@@ -2,6 +2,7 @@ const { listAllUsers } = require("./users/list-all-users");
 const { loginUser } = require("./users/login-user");
 const { registerUser } = require("./users/register-user");
 const { showUser } = require("./users/show-user");
+const { verifyAccount } = require("./users/verify-user-account");
 
 // ----------- customers -------------
 const { listAllCustomers } = require("./customers/list-all-customers");
@@ -19,7 +20,8 @@ const UserService = {
     listAllUsers,
     loginUser,
     registerUser,
-    showUser
+    showUser,
+    verifyAccount
 }
 
 const CustomerService = {
